@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckIcon, CopyIcon, KeyRound, Lock, Unlock, RefreshCcw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { encryptPhoneNumber, decryptPhoneNumber } from "@/utils/cryptoUtils";
 
 const PhoneEncryptor = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -54,20 +55,21 @@ const PhoneEncryptor = () => {
       return;
     }
 
-    try {
-      const encrypted = encryptPhoneNumber(phoneNumber, encryptionKey);
-      setEncryptedResult(encrypted);
-      toast({
-        title: "Phone number encrypted",
-        description: "Your phone number has been successfully encrypted.",
+    encryptPhoneNumber(phoneNumber, encryptionKey)
+      .then(encrypted => {
+        setEncryptedResult(encrypted);
+        toast({
+          title: "Phone number encrypted",
+          description: "Your phone number has been successfully encrypted.",
+        });
+      })
+      .catch(error => {
+        toast({
+          title: "Encryption failed",
+          description: error instanceof Error ? error.message : "An unknown error occurred",
+          variant: "destructive",
+        });
       });
-    } catch (error) {
-      toast({
-        title: "Encryption failed",
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
-    }
   };
 
   const handleDecrypt = () => {
@@ -80,20 +82,21 @@ const PhoneEncryptor = () => {
       return;
     }
 
-    try {
-      const decrypted = decryptPhoneNumber(decryptText, encryptionKey);
-      setDecryptedResult(decrypted);
-      toast({
-        title: "Phone number decrypted",
-        description: "Your phone number has been successfully decrypted.",
+    decryptPhoneNumber(decryptText, encryptionKey)
+      .then(decrypted => {
+        setDecryptedResult(decrypted);
+        toast({
+          title: "Phone number decrypted",
+          description: "Your phone number has been successfully decrypted.",
+        });
+      })
+      .catch(error => {
+        toast({
+          title: "Decryption failed",
+          description: error instanceof Error ? error.message : "An unknown error occurred",
+          variant: "destructive",
+        });
       });
-    } catch (error) {
-      toast({
-        title: "Decryption failed",
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
-    }
   };
 
   const copyToClipboard = (text: string) => {

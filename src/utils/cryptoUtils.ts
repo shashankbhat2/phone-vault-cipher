@@ -1,4 +1,3 @@
-
 // This utility provides AES-256-GCM encryption and decryption functions
 // for securing phone numbers
 
@@ -8,7 +7,7 @@
  * @param keyHex - The hex string encryption key (256 bits / 32 bytes)
  * @returns The encrypted phone number as a base64 string
  */
-export function encryptPhoneNumber(phoneNumber: string, keyHex: string): string {
+export function encryptPhoneNumber(phoneNumber: string, keyHex: string): Promise<string> {
   // Input validation
   if (!phoneNumber) throw new Error("Phone number is required");
   if (!keyHex || keyHex.length !== 64) throw new Error("Invalid encryption key");
@@ -55,7 +54,7 @@ export function encryptPhoneNumber(phoneNumber: string, keyHex: string): string 
     });
   } catch (error) {
     console.error("Encryption error:", error);
-    throw new Error("Failed to encrypt phone number");
+    return Promise.reject("Failed to encrypt phone number");
   }
 }
 
